@@ -50,11 +50,13 @@
 - name: Include variables for Ubuntu
   include_vars: "{{ item }}"
   with_first_found:
-    - "{{ ansible_distribution|lower }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_distribution|lower|replace(' ','_') }}-{{ ansible_distribution_major_version }}.yml"
     - "main.yml"
   when: >
-    ansible_os_family == 'Debian' and
-    ansible_distribution == 'Ubuntu'
+    ansible_os_family == 'Debian' and (
+      ansible_distribution == 'Ubuntu' or
+      ansible_distribution == 'Linux Mint'
+    )
   tags:
     - include-ubuntu-vars
 
@@ -70,10 +72,12 @@
     - include-redhat
 
 - name: Include tasks for installation on Ubuntu
-  include_tasks: "install-{{ ansible_distribution|lower }}.yml"
+  include_tasks: "install-{{ ansible_distribution|lower|replace(' ','_') }}.yml"
   when: >
-    ansible_os_family == 'Debian' and
-    ansible_distribution == 'Ubuntu'
+    ansible_os_family == 'Debian' and (
+      ansible_distribution == 'Ubuntu' or
+      ansible_distribution == 'Linux Mint'
+    )
   tags:
     - install-ubuntu
 
